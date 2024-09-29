@@ -6,4 +6,4 @@ let goal = "pursue a higher education at a 4 year university or I will join the 
 let profileMessage = `My name is ${firstName} ${lastName}. I have been at SCC for ${yearsOfStudy} year(s) and plan to ${goal} after completing my courses.`;
 
 
-document.getElementById("profile").innerText = profileMessage;
+document.getElementById("profile").innerText = profileMessage
