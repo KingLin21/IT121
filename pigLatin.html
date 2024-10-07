@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pig Latin translator</title>
+</head>
+<body>
+
+<script>
+    let phrase = prompt("Enter a phrase");
+    document.write("You entered - ", phrase + "<br><br>");
+
+    // Your pig-latin translation code here
+    function pigLatin(word) {
+        const vowels = ['a', 'e', 'i', 'o', 'u'];
+
+        if (word.length === 1) {
+            return "The input can't be translated.";
+        }
+
+        if (vowels.includes(word[0].toLowerCase())) {
+            return word + 'way';
+        }
+
+        else if (!vowels.includes(word[0].toLowerCase()) && !vowels.includes(word[1].toLowerCase())) {
+            return word.slice(2) + word.slice(0, 2) + 'ay';
+        }
+        else {
+            return word.slice(1) +word[0] + 'ay';
+        }
+    }
+
+    if (phrase) {
+        let words = phrase.split(' ');
+        let translatedPhrase = words.map(word => pigLatin(word)).join(' ');
+
+        document.write("Pig Latin translation - " + translatedPhrase);
+    } else {
+        document.write ("No phrase entered.");
+    }
+
+</script>
+
+</body>
+</html>
