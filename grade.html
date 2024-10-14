@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student grades</title>
+</head>
+
+<body>
+    <h1>Student grades</h1>
+    <ul id="student-list"></ul>
+    <p>Total number of students: <span id="total-students"></span></p>
+    <p>Lowest score: <span id="lowest-score"></span></p>
+    <p>Highest score: <span id="highest-score"></span></p>
+    <p>Average score: <span id="average-score"></span></p>
+    <script>
+        const grades = "jim|25, sue|32, mary|34, ann|22, ted|28, frank|15, lisa|19, mike|30, ahn|26, vishaya|27";
+
+        // Your code here
+        const studentsArray = grades.split(", ");
+
+        let names = [];
+        let scores = [];
+
+        for (let i = 0; i < studentsArray.length; i++) {
+            let studentData = studentsArray[i].split("|");
+            let name = studentData[0];
+            let score = parseInt(studentData[1]);
+
+            name = name.charAt(0).toUpperCase() + name.slice(1);
+
+            names.push(name);
+            scores.push(score);
+        }
+
+        const studentList = document.getElementById("student-list");
+        for (let i = 0; i < names.length; i++) {
+            let listItem = document.createElement("li");
+            listItem.textContent = names[i] + ": " + scores[i];
+            studentList.appendChild(listItem);
+        }
+
+        const totalStudents = names.length;
+        document.getElementById("total-students").textContent = totalStudents;
+
+        let lowestScore = scores[0];
+        for (let i = 1; i < scores.length; i++) {
+            if (scores[i] < lowestScore) {
+                lowestScore = scores[i];
+            }
+        }
+        document.getElementById("lowest-score").textContent = lowestScore;
+
+        let highestScore = scores[0];
+        for (let i = 1; i < scores.length; i++) {
+            if (scores[i] > highestScore) {
+                highestScore = scores[i];
+            }
+        }
+        document.getElementById("highest-score").textContent = highestScore;
+
+        let totalScore = 0;
+        for (let i = 0; i < scores.length; i++) {
+            totalScore += scores[i];
+        }
+        const averageScore = totalScore / totalStudents;
+        document.getElementById("average-score").textContent = averageScore.toFixed(2);
+
+    </script>
+
+</body>
+
+</html>
