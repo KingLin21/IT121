@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+</head>
+<body>
+
+<h1>Functions & validation</h1>
+
+<form id="form1" action="#" onsubmit="return validateForm(this);">
+  first name: <input type="text" name="firstname"><br>
+  last name: <input type="text" name="lastname"><br>
+  password: <input type="text" name="password"><br>
+
+  <button >Check</button>
+</form>
+
+<hr><div id="message"></div>
+
+<script>
+  const validatePassword = (password) => {
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasMinlength = password.length >=8;
+  return hasUppercase && hasLowercase && hasMinlength;}
+  
+
+  const validateForm = (myForm) => {
+
+    let firstname = myForm.firstname.value.trim();
+    let lastname = myForm.lastname.value.trim();
+    let password = myForm.password.value;
+
+    if (firstname === "") {
+      $("#message").html("First name is required.");
+      return false;
+    }
+
+    if (lastname === "") {
+      $("#message").html("Last name is required.");
+      return false;
+    }
+
+    if (!validatePassword(password)) {
+      $("#message").html("Password must be at least 8 characters long and contain at least one uppercase letter and one lowercase letter.");
+      return false;
+    }
+    
+    // use this syntax to update 'message' DIV with appropriate wording
+    $("#message").html("Form submitted successfully!");
+
+    return false; // prevent page reload
+  }
+
+</script>
+
+</body>
+</html> 
