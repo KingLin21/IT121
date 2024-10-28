@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <h1>Robo Dealer</h1>
+
+<button onclick="dealHand();">Deal Hand</button>
+<hr>
+<div id="card_hand"></div>
+<script>
+  class Card {
+    constructor(value, suit) {
+      this.value = value;
+      this.suit = suit;
+    }
+
+    getName() {
+      let cardName = this.value;
+      if (this.value == 11) cardName = 'Jack';
+      else if (this.value == 12) cardName = 'Queen';
+      else if (this.value == 13) cardName = 'King';
+      else if (this.value == 14) cardName = 'Ace';
+
+      return cardName + ' of ' + this.suit;
+    }
+  }
+
+const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+const deck = [];
+
+for (let i = 2; i <= 14; i++) {
+  for (let suit of suits) {
+    deck.push(new Card(i, suit));
+  }
+}
+
+const dealHand = () => {
+  const hand = [];
+  const usedIndices = [];
+
+  while (hand.length < 5) {
+    const randomIndex = Math.floor(Math.random() * deck.length);
+
+    if (!usedIndices.includes(randomIndex)) {
+      hand.push(deck[randomIndex]);
+      usedIndices.push(randomIndex);
+    }
+  }
+
+  displayHand(hand);
+}
+
+const displayHand = (hand) => {
+  $('#card_hand').html('');
+
+  hand.forEach(card => {
+    $('#card_hand').append(`<p>${card.getName()}</p>`);
+  })
+}
+</script>
+</body>
+</html>
