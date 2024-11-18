@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Day Weather Forecast</title>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .forecast {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .forecast-day {
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h3>Daily Weather Forecast</h3>
+    <hr>
+    <form id="testform">
+        City: <input type="text" id="city" name="city">
+        State:
+        <select id="state" name="state">
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+        </select>
+    </form>
+    <button>Submit</button>
+    <p id="errorMessage" class="error"></p>
+    <div id="forecast" class="forecast"></div>
+
+    <script>
+        let API_KEY = "6bd2eb9ec39bbb3038ec0433a60d3326"; 
+
+        const kelvinToF = (value) => (((Number(value) - 273.15) * 9) / 5 + 32).toFixed(2);
+
+        $('button').on('click', async (e) => {
+            e.preventDefault();
+            const city = $('#city').val().trim();
+            const state = $('#state').val();
+            const errorMessage = $('#errorMessage');
+            const forecastDiv = $('#forecast');
+
+            // Clear previous errors and forecast
+            errorMessage.text('');
+            forecastDiv.html('');
+
+            if (!city || /\d/.test(city)) {
+                errorMessage.text('Please enter a valid city name.');
+                return;
+            }
+
+            try {
+                // Geocoding API to get latitude and longitude
+                const geoResponse = await fetch(
+                    `https://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&limit=1&appid=${API_KEY}`
+                );
+                const geoData = await geoResponse.json();
+
+                if (geoData.length === 0) {
+                    errorMessage.text('City not found.');
+                    return;
+                }
+
+                const { lat, lon } = geoData[0];
+
+                // Fetch weather data
+                const weatherResponse = await fetch(
+                    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+                );
+                const weatherData = await weatherResponse.json();
+
+                if (!weatherData.list || weatherData.list.length === 0) {
+                    errorMessage.text('No forecast data available.');
+                    return;
+                }
+
+                // Display weather data
+                const dailyForecasts = weatherData.list.filter((_, index) => index % 8 === 0); // 1 forecast per day
+                dailyForecasts.forEach((forecast) => {
+                    const date = new Date(forecast.dt * 1000).toDateString();
+                    const minTemp = kelvinToF(forecast.main.temp_min);
+                    const maxTemp = kelvinToF(forecast.main.temp_max);
+                    const humidity = forecast.main.humidity;
+                    const description = forecast.weather[0].description;
+                    const icon = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
+
+                    forecastDiv.append(`
+                        <div class="forecast-day">
+                            <p><strong>${date}</strong></p>
+                            <img src="${icon}" alt="${description}">
+                            <p>${description}</p>
+                            <p>Min: ${minTemp}°F</p>
+                            <p>Max: ${maxTemp}°F</p>
+                            <p>Humidity: ${humidity}%</p>
+                        </div>
+                    `);
+                });
+            } catch (error) {
+                errorMessage.text('An error occurred while fetching the weather data.');
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
